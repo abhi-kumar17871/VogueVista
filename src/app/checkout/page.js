@@ -19,8 +19,9 @@ export default function Checkout() {
     setAddresses,
     checkoutFormData,
     setCheckoutFormData,
+    setCartItems,
   } = useContext(GlobalContext);
-
+  const [cartTotal, setCartTotal] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -42,6 +43,33 @@ export default function Checkout() {
     }
   }
 
+  async function handleQuantityChange(e, itemId) {
+    console.log("handleQuantityChange called");
+    const newQuantity = parseInt(e.target.value, 10);
+    const updatedCartItems = cartItems.map((item) => {
+      if (item._id === itemId) {
+        return {
+          ...item,
+          quantity: newQuantity,
+        };
+      }
+      return item;
+    });
+
+    const newTotalPrice = calculateTotalPrice(updatedCartItems);
+
+    setCartItems(updatedCartItems);
+    setCheckoutFormData({
+      ...checkoutFormData,
+      totalPrice: newTotalPrice, // Update the total price in checkoutFormData
+    });
+  }
+  function calculateTotalPrice(items) {
+    return items.reduce(
+      (total, item) => item.productID.price * item.quantity + total,
+      0
+    );
+  }
   useEffect(() => {
     if (user !== null) getAllAddresses();
   }, [user]);
@@ -65,12 +93,13 @@ export default function Checkout() {
           user: user?._id,
           shippingAddress: getCheckoutFormData.shippingAddress,
           orderItems: cartItems.map((item) => ({
-            qty: 1,
+            qty: item.quantity, // Use the item's quantity
             product: item.productID,
+            size: item.size, // Use the item's size
           })),
           paymentMethod: "Stripe",
           totalPrice: cartItems.reduce(
-            (total, item) => item.productID.price + total,
+            (total, item) => item.productID.price * item.quantity + total,
             0
           ),
           isPaid: true,
@@ -136,7 +165,7 @@ export default function Checkout() {
         },
         unit_amount: item.productID.price * 100,
       },
-      quantity: 1,
+      quantity: item.quantity,
     }));
 
     const res = await callStripeSession(createLineItems);
@@ -218,6 +247,25 @@ export default function Checkout() {
                     <span className="font-semibold">
                       {item && item.productID && item.productID.price}
                     </span>
+                    <span>
+                      Quantity:
+                      <select
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(e, item._id)} //
+                        className="my-2 p-2 border w-12 rounded-md"
+                      >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               ))
@@ -270,7 +318,8 @@ export default function Checkout() {
                 $
                 {cartItems && cartItems.length
                   ? cartItems.reduce(
-                      (total, item) => item.productID.price + total,
+                      (total, item) =>
+                        item.productID.price * item.quantity + total,
                       0
                     )
                   : "0"}
@@ -286,7 +335,8 @@ export default function Checkout() {
                 $
                 {cartItems && cartItems.length
                   ? cartItems.reduce(
-                      (total, item) => item.productID.price + total,
+                      (total, item) =>
+                        item.productID.price * item.quantity + total,
                       0
                     )
                   : "0"}

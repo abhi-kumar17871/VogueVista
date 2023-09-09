@@ -33,8 +33,10 @@ export default function Home() {
               Best Fashion Collection
             </h1>
             <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl">
-              Quisquemos sodales suscipit tortor ditaemcos condimentum de cosmo
-              lacus meleifend menean diverra loremous.
+              Discover a world of refined fashion where sophistication meets
+              simplicity. Our thoughtfully curated collections epitomize the
+              latest trends, ensuring you're always impeccably dressed. Join us
+              on a journey of timeless elegance and sartorial excellence.
             </p>
 
             <button

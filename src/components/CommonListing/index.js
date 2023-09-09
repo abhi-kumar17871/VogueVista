@@ -5,10 +5,11 @@ import ProductButton from "./ProductButtons";
 import ProductTile from "./ProductTile";
 import { useEffect } from "react";
 import Notification from "../Notification";
-
+const initialFormData = {
+  sizes: [],
+};
 export default function CommonListing({ data }) {
   const router = useRouter();
-
   useEffect(() => {
     router.refresh();
   }, []);

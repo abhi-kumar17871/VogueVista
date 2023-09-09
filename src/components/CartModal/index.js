@@ -1,12 +1,13 @@
 "use client";
 
-import { Fragment, useContext, useEffect } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import CommonModal from "../CommonModal";
 import { GlobalContext } from "@/context";
 import { deleteFromCart, getAllCartItems } from "@/services/cart";
 import { toast } from "react-toastify";
 import ComponentLevelLoader from "../Loaders/componentlevel";
 import { useRouter } from "next/navigation";
+import SelectComponent from "../FormElements/SelectComponent";
 
 export default function CartModal() {
   const {
@@ -19,6 +20,7 @@ export default function CartModal() {
     componentLevelLoader,
   } = useContext(GlobalContext);
 
+  const [formData, setFormData] = useState("Select");
   const router = useRouter();
 
   async function extractAllCartItems() {
@@ -36,7 +38,8 @@ export default function CartModal() {
                     ? parseInt(
                         (
                           item.productID.price -
-                          item.productID.price * (item.productID.priceDrop / 100)
+                          item.productID.price *
+                            (item.productID.priceDrop / 100)
                         ).toFixed(2)
                       )
                     : item.productID.price,
@@ -112,6 +115,7 @@ export default function CartModal() {
                         cartItem.productID.price}
                     </p>
                   </div>
+
                   <div className="flex flex-1 items-end justify-between text-sm">
                     <button
                       type="button"
